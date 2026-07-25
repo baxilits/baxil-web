@@ -1,5 +1,33 @@
 "use client";
 
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+
+
+export default async function AdminPage() {
+
+
+    const cookieStore = await cookies();
+
+
+    const session = cookieStore.get(
+        "admin_session"
+    );
+
+
+
+    if (!session) {
+
+        redirect("/admin/login");
+
+    }
+
+
+    // kode admin kamu lanjut di bawah
+
+
+}
+
 import { useEffect, useState } from "react";
 
 export default function AdminPage() {
@@ -569,10 +597,10 @@ export default function AdminPage() {
 
                                                 <span
                                                     className={`w-fit rounded-full px-3 py-1 text-sm ${order.status === "Success"
-                                                            ? "bg-green-600"
-                                                            : order.status === "Cancelled"
-                                                                ? "bg-red-600"
-                                                                : "bg-yellow-600"
+                                                        ? "bg-green-600"
+                                                        : order.status === "Cancelled"
+                                                            ? "bg-red-600"
+                                                            : "bg-yellow-600"
                                                         }`}
                                                 >
                                                     {order.status}
