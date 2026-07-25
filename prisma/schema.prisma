@@ -1,0 +1,38 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./baxil.db"
+}
+
+model Stock {
+  id          Int      @id @default(autoincrement())
+  accountName String
+  username    String   @unique
+  robux       Int
+  createdAt   DateTime @default(now())
+
+  orders      Order[]
+}
+
+model Order {
+  id               Int      @id @default(autoincrement())
+
+  customerUsername String
+
+  supplierId       Int?
+
+  supplier         Stock?   @relation(fields: [supplierId], references: [id])
+
+  robux            Int
+
+  price            Int
+
+  payment          String
+
+  status           String   @default("Pending")
+
+  createdAt        DateTime @default(now())
+}
