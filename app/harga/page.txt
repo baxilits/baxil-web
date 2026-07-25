@@ -1,8 +1,0 @@
-export default function HargaPage() {
-  return (
-    <main>
-      <h1>Harga Robux</h1>
-      <p>Harga Robux Baxil.</p>
-    </main>
-  );
-}
