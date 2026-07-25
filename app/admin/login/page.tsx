@@ -1,116 +1,81 @@
 "use client";
 
-
-import { useState } from "react";
-
+import { useState, FormEvent } from "react";
+import { useRouter } from "next/navigation";
 
 export default function AdminLogin() {
-
-
     const router = useRouter();
 
     const [password, setPassword] = useState("");
-
     const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
 
+    async function handleLogin(e: FormEvent) {
+        e.preventDefault();
 
+        if (!password) {
+            setError("Masukkan password admin");
+            return;
+        }
 
-    async function login() {
+        setLoading(true);
+        setError("");
 
-
-        const res = await fetch(
-            "/api/admin/login",
-            {
+        try {
+            const res = await fetch("/api/admin/login", {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
                 },
-                body: JSON.stringify({
-                    password
-                })
+                body: JSON.stringify({ password }),
+            });
+
+            const data = await res.json();
+
+            if (data.success) {
+                localStorage.setItem("adminLogin", "true");
+                router.push("/admin/dashboard");
+            } else {
+                setError(data.error || "Password salah");
             }
-        );
-
-
-
-        const data = await res.json();
-
-
-
-        if (data.success) {
-
-            router.push("/admin");
-
+        } catch (err) {
+            console.error(err);
+            setError("Server error");
+        } finally {
+            setLoading(false);
         }
-        else {
-
-            setError(data.error);
-
-        }
-
-
     }
 
-
-
     return (
-
-        <main className="min-h-screen bg-black text-white flex items-center justify-center">
-
-
+        <main className="flex min-h-screen items-center justify-center bg-black p-6 text-white">
             <div className="w-full max-w-md rounded-2xl border border-zinc-800 bg-zinc-950 p-8">
+                <h1 className="mb-2 text-3xl font-bold">BAXIL ADMIN</h1>
+                <p className="mb-6 text-zinc-400">Login panel administrator</p>
 
+                <form onSubmit={handleLogin} className="space-y-4">
+                    <div>
+                        <input
+                            type="password"
+                            placeholder="Password Admin"
+                            value={password}
+                            onChange={(e) => {
+                                setPassword(e.target.value);
+                                if (error) setError("");
+                            }}
+                            className="w-full rounded-xl border border-zinc-700 bg-black p-4 text-white outline-none focus:border-zinc-500 transition"
+                        />
+                        {error && <p className="mt-2 text-sm text-red-400">{error}</p>}
+                    </div>
 
-                <h1 className="text-3xl font-bold mb-6">
-                    BAXIL ADMIN
-                </h1>
-
-
-                <input
-
-                    type="password"
-
-                    placeholder="Password Admin"
-
-                    value={password}
-
-                    onChange={(e) => setPassword(e.target.value)}
-
-                    className="w-full rounded-xl border border-zinc-700 bg-black p-4"
-
-                />
-
-
-
-                {
-                    error &&
-
-                    <p className="mt-3 text-red-400">
-                        {error}
-                    </p>
-
-                }
-
-
-
-                <button
-
-                    onClick={login}
-
-                    className="mt-5 w-full rounded-xl bg-white py-4 font-bold text-black"
-
-                >
-
-                    Login
-
-                </button>
-
-
+                    <button
+                        type="submit"
+                        disabled={loading}
+                        className="w-full rounded-xl bg-white py-4 font-bold text-black transition hover:bg-zinc-200 disabled:opacity-50"
+                    >
+                        {loading ? "Checking..." : "Login"}
+                    </button>
+                </form>
             </div>
-
-
         </main>
-
-    )
-
+    );
 }
