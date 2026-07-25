@@ -14,6 +14,7 @@ export default function TopUpPage() {
   const [robloxUser, setRobloxUser] = useState<any>(null);
 
   const [checking, setChecking] = useState(false);
+  const [isAdult, setIsAdult] = useState(false);
 
 
 
@@ -43,6 +44,9 @@ ${payment}
 
 TOTAL:
 Rp${total.toLocaleString("id-ID")}
+
+Verifikasi Umur:
+${isAdult ? "✓ Pengguna menyatakan akun 18+" : "Belum Verifikasi"}
 
 Status:
 Menunggu Pembayaran
@@ -122,6 +126,11 @@ Terima kasih.
 
     if (!isValid) {
       alert("Jumlah Robux tidak valid");
+      return;
+    }
+
+    if (!isAdult) {
+      alert("Silakan centang verifikasi akun Roblox 18+ terlebih dahulu");
       return;
     }
 
@@ -237,6 +246,8 @@ Terima kasih.
               setUsername(e.target.value);
 
               setRobloxUser(null);
+
+              setIsAdult(false);
 
             }}
 
@@ -357,6 +368,27 @@ Terima kasih.
 
 
           </select>
+
+          <div className="mt-6 flex items-start gap-3 rounded-xl border border-zinc-700 bg-black p-4">
+
+            <input
+              type="checkbox"
+              id="adultVerify"
+              checked={isAdult}
+              onChange={(e) => setIsAdult(e.target.checked)}
+              className="mt-1 h-5 w-5 cursor-pointer"
+            />
+
+            <label
+              htmlFor="adultVerify"
+              className="cursor-pointer text-sm text-zinc-300"
+            >
+              Saya memastikan akun Roblox yang digunakan sudah berusia{" "}
+              <strong className="text-white">18+</strong>{" "}
+              dan data yang saya berikan benar.
+            </label>
+
+          </div>
 
 
 
@@ -552,6 +584,18 @@ Terima kasih.
 
             </div>
 
+            <div className="flex justify-between">
+
+              <span className="text-zinc-400">
+                Verifikasi
+              </span>
+
+              <span className={isAdult ? "text-green-400" : "text-red-400"}>
+                {isAdult ? "✓ 18+ Terverifikasi" : "Belum Verifikasi"}
+              </span>
+
+            </div>
+
 
 
 
@@ -621,10 +665,10 @@ Terima kasih.
 
           <button
             onClick={sendOrder}
-            disabled={!isValid || !robloxUser?.found}
-            className={`mt-8 w-full rounded-xl py-4 text-center font-bold transition ${isValid && robloxUser?.found
-                ? "bg-white text-black hover:opacity-90"
-                : "cursor-not-allowed bg-zinc-700 text-zinc-400"
+            disabled={!isValid || !robloxUser?.found || !isAdult}
+            className={`mt-8 w-full rounded-xl py-4 text-center font-bold transition ${isValid && robloxUser?.found && isAdult
+              ? "bg-white text-black hover:opacity-90"
+              : "cursor-not-allowed bg-zinc-700 text-zinc-400"
               }`}
           >
             Pesan via WhatsApp
