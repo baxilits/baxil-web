@@ -3,8 +3,8 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./baxil.db"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model Stock {
@@ -19,7 +19,6 @@ model Stock {
 
 model Order {
   id               Int      @id @default(autoincrement())
-
   customerUsername String
 
   supplierId       Int?
@@ -27,11 +26,8 @@ model Order {
   supplier         Stock?   @relation(fields: [supplierId], references: [id])
 
   robux            Int
-
   price            Int
-
   payment          String
-
   status           String   @default("Pending")
 
   createdAt        DateTime @default(now())
