@@ -12,7 +12,11 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+// Domain utama Anda saat ini
+const baseUrl = "https://baxil-store.vercel.app";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(baseUrl),
   title: {
     default: "Baxil Store - Toko Online Resmi Baxil Store - Belanja Mudah & Cepat",
     template: "%s | Baxil Store",
@@ -23,11 +27,11 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Baxil Store - Toko Online Resmi",
     description: "Toko Online Resmi Baxil Store - Belanja Mudah & Cepat",
-    url: "https://baxilstore.com",
+    url: baseUrl,
     siteName: "Baxil Store",
     images: [
       {
-        url: "/images/carbon-variant-3.png", // Gambar No. 3 - Carbon Variant
+        url: `${baseUrl}/images/carbon-variant-3.png`,
         width: 1200,
         height: 630,
         alt: "Baxil Store - Carbon Variant",
@@ -40,7 +44,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Baxil Store - Toko Online Resmi",
     description: "Toko Online Resmi Baxil Store - Belanja Mudah & Cepat",
-    images: ["/images/carbon-variant-3.png"],
+    images: [`${baseUrl}/images/carbon-variant-3.png`],
   },
   icons: {
     icon: "/favicon.ico",
@@ -61,11 +65,3 @@ export default function RootLayout({
     </html>
   );
 }
-```eof
-
-### Ringkasan Perubahan:
-1. **Metadata Lengkap**: Mengatur judul (`Baxil Store`), deskripsi resmi, serta *keywords* untuk keperluan SEO.
-2. **OpenGraph & Twitter Cards**: Menambahkan path gambar varian Carbon No. 3 (`/ images / carbon - variant - 3.jpg`) agar pratinjau tautan di media sosial tampil elegan.
-3. **Bahasa & Tema Dark Carbon**: Mengubah tag HTML `lang = "id"` dan memberikan dasar tema gelap/carbon pada elemen `body`.
-
-Pastikan Anda menyimpan file gambar varian Carbon No. 3 di dalam folder `public / images / carbon - variant - 3.jpg` pada proyek Next.js Anda. Jika ada penyesuaian lain yang diinginkan, silakan beri tahu saya!
