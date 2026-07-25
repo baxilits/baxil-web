@@ -14,6 +14,7 @@ export default function TopUpPage() {
   const [robloxUser, setRobloxUser] = useState<any>(null);
 
   const [checking, setChecking] = useState(false);
+
   const [isAdult, setIsAdult] = useState(false);
 
 
@@ -46,7 +47,7 @@ TOTAL:
 Rp${total.toLocaleString("id-ID")}
 
 Verifikasi Umur:
-${isAdult ? "✓ Pengguna menyatakan akun 18+" : "Belum Verifikasi"}
+${isAdult ? "✓ Akun Roblox 18+" : "Belum Verifikasi"}
 
 Status:
 Menunggu Pembayaran
@@ -57,18 +58,18 @@ Terima kasih.
 
 
 
-
   async function checkRoblox() {
 
-
-    if (!username) return;
+    if (!username) {
+      alert("Masukkan username Roblox terlebih dahulu");
+      return;
+    }
 
 
     setChecking(true);
 
 
     try {
-
 
       const res = await fetch("/api/roblox", {
 
@@ -79,9 +80,7 @@ Terima kasih.
         },
 
         body: JSON.stringify({
-
           username
-
         })
 
       });
@@ -91,13 +90,11 @@ Terima kasih.
       const data = await res.json();
 
 
-
       setRobloxUser(data);
 
 
 
     } catch (error) {
-
 
       console.log(error);
 
@@ -108,65 +105,106 @@ Terima kasih.
 
     } finally {
 
-
       setChecking(false);
-
 
     }
 
 
   }
 
+
+
+
   async function sendOrder() {
 
+
     if (!robloxUser?.found) {
+
       alert("Cek username Roblox terlebih dahulu");
+
       return;
+
     }
+
 
     if (!isValid) {
+
       alert("Jumlah Robux tidak valid");
+
       return;
+
     }
 
+
     if (!isAdult) {
-      alert("Silakan centang verifikasi akun Roblox 18+ terlebih dahulu");
+
+      alert("Silakan centang verifikasi akun Roblox 18+");
+
       return;
+
     }
+
+
 
     try {
 
+
       const res = await fetch("/api/order", {
+
         method: "POST",
+
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "application/json"
         },
+
+
         body: JSON.stringify({
+
           customerUsername: robloxUser.username,
+
           robux,
+
           price: total,
-          payment,
-        }),
+
+          payment
+
+        })
+
+
       });
+
+
 
       const data = await res.json();
 
+
+
       if (!data.success) {
+
         alert(data.error || "Gagal membuat order");
+
         return;
+
       }
+
+
 
       window.open(
         `https://wa.me/${adminWhatsApp}?text=${waMessage}`,
         "_blank"
       );
 
-    } catch (err) {
 
-      console.log(err);
-      alert("Server Error");
+
+    } catch (error) {
+
+      console.log(error);
+
+      alert("Server error");
 
     }
+
+
   }
 
 
@@ -179,11 +217,9 @@ Terima kasih.
 
       {/* HEADER */}
 
-      <div className="border-b border-zinc-800">
-
+      <header className="border-b border-zinc-800">
 
         <div className="mx-auto max-w-6xl px-6 py-8">
-
 
           <h1 className="text-4xl font-bold">
             BAXIL STORE
@@ -197,28 +233,22 @@ Terima kasih.
 
         </div>
 
-
-      </div>
-
-
+      </header>
 
 
 
 
       {/* CONTENT */}
 
+
       <div className="mx-auto grid max-w-6xl gap-8 p-6 lg:grid-cols-2">
-
-
-
 
 
 
         {/* FORM */}
 
 
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-8">
-
+        <section className="rounded-2xl border border-zinc-800 bg-zinc-950 p-8">
 
 
           <h2 className="mb-6 text-2xl font-bold">
@@ -227,12 +257,9 @@ Terima kasih.
 
 
 
-
-
           <label className="text-sm text-zinc-400">
             Username Roblox
           </label>
-
 
 
           <input
@@ -247,8 +274,6 @@ Terima kasih.
 
               setRobloxUser(null);
 
-              setIsAdult(false);
-
             }}
 
             placeholder="Masukkan username Roblox"
@@ -256,8 +281,6 @@ Terima kasih.
             className="mt-2 w-full rounded-xl border border-zinc-700 bg-black p-4 outline-none"
 
           />
-
-
 
 
 
@@ -284,14 +307,11 @@ Terima kasih.
 
 
 
-
-
           <label className="mt-6 block text-sm text-zinc-400">
 
             Jumlah Robux
 
           </label>
-
 
 
 
@@ -307,35 +327,26 @@ Terima kasih.
 
             onChange={(e) => setRobux(Number(e.target.value))}
 
-            className="mt-2 w-full rounded-xl border border-zinc-700 bg-black p-4 outline-none"
+            className="mt-2 w-full rounded-xl border border-zinc-700 bg-black p-4"
 
           />
 
 
-
-
-
           <p className="mt-2 text-sm text-zinc-500">
-
             Minimal 100 RBX dan kelipatan 100.
-
           </p>
-
-
 
 
 
           {!isValid && (
 
-            <p className="mt-2 text-sm text-red-500">
+            <p className="mt-2 text-red-500 text-sm">
 
               Jumlah Robux tidak valid.
 
             </p>
 
           )}
-
-
 
 
 
@@ -349,7 +360,6 @@ Terima kasih.
 
 
 
-
           <select
 
             value={payment}
@@ -360,6 +370,7 @@ Terima kasih.
 
           >
 
+
             <option>QRIS</option>
 
             <option>DANA</option>
@@ -369,81 +380,106 @@ Terima kasih.
 
           </select>
 
-          <div className="mt-6 flex items-start gap-3 rounded-xl border border-zinc-700 bg-black p-4">
+
+
+
+
+          {/* VERIFIKASI UMUR */}
+
+          <div className="
+mt-6
+flex
+items-start
+gap-3
+rounded-xl
+border
+border-zinc-700
+bg-zinc-900
+p-5
+">
+
 
             <input
+
               type="checkbox"
+
               id="adultVerify"
+
               checked={isAdult}
+
               onChange={(e) => setIsAdult(e.target.checked)}
-              className="mt-1 h-5 w-5 cursor-pointer"
+
+              className="
+mt-1
+h-5
+w-5
+cursor-pointer
+accent-white
+"
+
             />
 
+
             <label
+
               htmlFor="adultVerify"
-              className="cursor-pointer text-sm text-zinc-300"
+
+              className="
+cursor-pointer
+text-sm
+text-zinc-200
+leading-relaxed
+"
+
             >
-              Saya memastikan akun Roblox yang digunakan sudah berusia{" "}
-              <strong className="text-white">18+</strong>{" "}
+
+              Saya memastikan akun Roblox yang digunakan sudah berusia
+
+              <strong className="text-white">
+
+                {" "}18+
+
+              </strong>
+
+              {" "}
+
               dan data yang saya berikan benar.
+
+
             </label>
+
 
           </div>
 
 
 
-        </div>
-
-
-
-
-
-
-
-
+        </section>
 
         {/* SUMMARY */}
 
-
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-8">
-
-
-
+        <section className="rounded-2xl border border-zinc-800 bg-zinc-950 p-8">
 
 
           <h2 className="mb-6 text-2xl font-bold">
-
             Ringkasan Pembayaran
-
           </h2>
-
-
 
 
 
 
           {/* AVATAR */}
 
-
-
           <div className="mb-8 rounded-xl border border-zinc-800 bg-black p-5">
 
 
-
             <h3 className="mb-4 font-bold">
-
               Avatar Roblox
-
             </h3>
 
 
 
-
-
             {
-
               robloxUser?.found ? (
-
 
                 <div className="text-center">
 
@@ -461,63 +497,46 @@ Terima kasih.
 
 
                   <p className="mt-3 font-bold">
-
                     {robloxUser.displayName}
-
                   </p>
-
 
 
 
                   <p className="text-sm text-zinc-400">
-
                     @{robloxUser.username}
-
                   </p>
-
 
 
 
                   <p className="mt-2 text-green-400">
-
                     ✓ Username ditemukan
-
                   </p>
-
 
 
                 </div>
 
 
-
-
               )
 
+                :
 
-                : robloxUser?.found === false ? (
+                robloxUser?.found === false ? (
 
 
                   <p className="text-red-400">
-
                     ✕ Username Roblox tidak ditemukan
-
                   </p>
 
 
                 )
 
 
-                  : (
+                  :
 
 
-                    <span className="text-zinc-500">
-
-                      Belum dicek
-
-                    </span>
-
-
-                  )
+                  <span className="text-zinc-500">
+                    Belum dicek
+                  </span>
 
 
             }
@@ -530,7 +549,7 @@ Terima kasih.
 
 
 
-
+          {/* DETAIL */}
 
           <div className="space-y-5">
 
@@ -542,17 +561,19 @@ Terima kasih.
                 Akun Tujuan
               </span>
 
+
               <span>
                 {robloxUser?.username || "-"}
               </span>
+
 
             </div>
 
 
 
 
-
             <div className="flex justify-between">
+
 
               <span className="text-zinc-400">
                 Nominal
@@ -572,6 +593,7 @@ Terima kasih.
 
             <div className="flex justify-between">
 
+
               <span className="text-zinc-400">
                 Metode
               </span>
@@ -584,18 +606,44 @@ Terima kasih.
 
             </div>
 
+
+
+
+
+            {/* STATUS UMUR */}
+
+
             <div className="flex justify-between">
 
+
               <span className="text-zinc-400">
-                Verifikasi
+                Verifikasi Umur
               </span>
 
-              <span className={isAdult ? "text-green-400" : "text-red-400"}>
-                {isAdult ? "✓ 18+ Terverifikasi" : "Belum Verifikasi"}
+
+              <span
+                className={
+                  isAdult
+                    ?
+                    "text-green-400"
+                    :
+                    "text-red-400"
+                }
+              >
+
+                {
+                  isAdult
+                    ?
+                    "✓ Akun 18+"
+                    :
+                    "Belum Verifikasi"
+                }
+
+
               </span>
+
 
             </div>
-
 
 
 
@@ -623,8 +671,8 @@ Terima kasih.
               </span>
 
 
-
             </div>
+
 
 
 
@@ -635,11 +683,8 @@ Terima kasih.
 
 
               <span className="text-zinc-400">
-
                 Status
-
               </span>
-
 
 
               <span className="text-yellow-400">
@@ -661,36 +706,66 @@ Terima kasih.
 
 
 
+          {/* BUTTON */}
 
 
           <button
+
             onClick={sendOrder}
-            disabled={!isValid || !robloxUser?.found || !isAdult}
-            className={`mt-8 w-full rounded-xl py-4 text-center font-bold transition ${isValid && robloxUser?.found && isAdult
-              ? "bg-white text-black hover:opacity-90"
-              : "cursor-not-allowed bg-zinc-700 text-zinc-400"
-              }`}
+
+            disabled={
+              !isValid ||
+              !robloxUser?.found ||
+              !isAdult
+            }
+
+
+            className={`
+mt-8
+w-full
+rounded-xl
+py-4
+font-bold
+transition
+
+${isValid &&
+                robloxUser?.found &&
+                isAdult
+
+                ?
+
+                "bg-white text-black hover:opacity-90"
+
+                :
+
+                "cursor-not-allowed bg-zinc-700 text-zinc-400"
+
+              }
+
+`}
+
           >
+
+
             Pesan via WhatsApp
+
+
           </button>
 
 
 
 
-
-        </div>
-
-
+        </section>
 
 
 
       </div>
 
 
-
-
     </main>
 
+
   );
+
 
 }
