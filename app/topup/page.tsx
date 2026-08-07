@@ -13,7 +13,7 @@ export default function TopUpPage() {
   const [isAdult, setIsAdult] = useState(false);
 
   const isValid = robux >= 100 && robux % 100 === 0;
-  const total = (robux / 100) * 18000;
+  const total = (robux / 100) * 17000;
 
   const waMessage = encodeURIComponent(
     `Halo Admin BAXIL,
